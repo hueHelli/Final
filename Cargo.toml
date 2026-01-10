@@ -3,4 +3,11 @@ name = "Final"
 version = "0.1.0"
 edition = "2024"
 
-[dependencies]
+[workspace]
+members = [
+    "crates/engine_core",
+    "crates/engine_render",
+    "examples/hello_world_game",
+]
+
+resolver = "2"

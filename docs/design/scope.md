@@ -9,8 +9,8 @@
 ## Platforms
 
 - Primary targets:
-  - Windows (x86_64)
   - Linux (x86_64), with SteamOS/Steam Deck as a key environment.
+  - Windows (x86_64)
 - Non-goals for now:
   - Consoles, mobile, WebAssembly.
 
