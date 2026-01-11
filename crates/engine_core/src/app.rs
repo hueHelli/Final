@@ -8,7 +8,7 @@ use winit::{
 
 use winit::dpi::LogicalSize;
 
-use crate::Time;
+use crate::{EngineConfig, Time};
 
 use log::{debug, info};
 
@@ -29,12 +29,17 @@ impl Engine {
     }
 
     fn init_window(&mut self, ael: &ActiveEventLoop) {
+        let config = EngineConfig::load();
+
         info!("Creating window");
         let window = ael
             .create_window(
                 WindowAttributes::default()
-                    .with_title("My Engine - Hello World")
-                    .with_inner_size(LogicalSize::new(800.0, 600.0)),
+                    .with_title(config.window.title)
+                    .with_inner_size(LogicalSize::new(
+                        config.window.width as f64,
+                        config.window.height as f64,
+                    )),
             )
             .unwrap();
 
