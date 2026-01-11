@@ -10,6 +10,8 @@ use winit::dpi::LogicalSize;
 
 use crate::Time;
 
+use log::{debug, info};
+
 /// Main engine state owned by the event loop.
 pub struct Engine {
     window: Option<Window>,
@@ -27,6 +29,7 @@ impl Engine {
     }
 
     fn init_window(&mut self, ael: &ActiveEventLoop) {
+        info!("Creating window");
         let window = ael
             .create_window(
                 WindowAttributes::default()
@@ -35,6 +38,7 @@ impl Engine {
             )
             .unwrap();
 
+        info!("Initializing renderer");
         let renderer = Renderer::new(&window);
 
         self.window = Some(window);
@@ -93,6 +97,7 @@ impl ApplicationHandler for Engine {
 
 /// Entry point
 pub fn run() {
+    info!("Engine run() starting");
     let event_loop = EventLoop::new().unwrap();
     let mut engine = Engine::new();
 
