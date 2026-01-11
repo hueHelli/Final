@@ -5,5 +5,5 @@ edition = "2024"
 
 [dependencies]
 wgpu = "28.0.0"
-winit = "0.29"
-glam = "0.27"
+winit = "0.30.12"
+glam = "0.30.10"

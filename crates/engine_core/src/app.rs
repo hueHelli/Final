@@ -1,29 +1,100 @@
 use engine_render::Renderer;
+use winit::{
+    application::ApplicationHandler,
+    event::WindowEvent,
+    event_loop::{ActiveEventLoop, EventLoop},
+    window::{Window, WindowAttributes},
+};
 
-/// Engine is the main entry point for running a game.
-/// For now, it just creates a Renderer stub and exists.
+use winit::dpi::LogicalSize;
+
+use crate::Time;
+
+/// Main engine state owned by the event loop.
 pub struct Engine {
-    renderer: Renderer,
-    // Later: fields for window, ECS world, input, timing, etc.
+    window: Option<Window>,
+    renderer: Option<Renderer>,
+    time: Time,
 }
 
 impl Engine {
-    /// Build a new Engine instance.
-    /// Later, you may pass configuration, window settings, etc.
     pub fn new() -> Self {
-        let renderer = Renderer::new();
-
-        Engine { renderer }
-    }
-
-    /// Run the engine main loop.
-    /// For now, this just renders a fixed number of frames and exists
-    /// Step 5 will replace this with a proper event loop and game loop
-    pub fn run (&mut self) {
-        // Temporary stub main loop: render 3 frames then exit
-        for _ in 0..3 {
-            self.renderer.render_frame();
-            println!("Engine frame rendered (stub).");
+        Self {
+            window: None,
+            renderer: None,
+            time: Time::new(),
         }
     }
+
+    fn init_window(&mut self, ael: &ActiveEventLoop) {
+        let window = ael
+            .create_window(
+                WindowAttributes::default()
+                    .with_title("My Engine - Hello World")
+                    .with_inner_size(LogicalSize::new(800.0, 600.0)),
+            )
+            .unwrap();
+
+        let renderer = Renderer::new(&window);
+
+        self.window = Some(window);
+        self.renderer = Some(renderer);
+    }
+
+    fn update(&mut self) {
+        self.time.update();
+    }
+
+    fn render(&mut self) {
+        if let Some(renderer) = &mut self.renderer {
+            renderer.render_frame();
+        }
+    }
+}
+
+impl ApplicationHandler for Engine {
+    fn resumed(&mut self, event_loop: &ActiveEventLoop) {
+        if self.window.is_none() {
+            self.init_window(event_loop);
+        }
+    }
+
+    fn window_event(
+        &mut self,
+        event_loop: &ActiveEventLoop,
+        _window_id: winit::window::WindowId,
+        event: WindowEvent,
+    ) {
+        match event {
+            WindowEvent::CloseRequested => {
+                event_loop.exit();
+            }
+
+            WindowEvent::Resized(size) => {
+                println!("Window resized to {}x{}", size.width, size.height);
+            }
+
+            WindowEvent::RedrawRequested => {
+                self.render();
+            }
+
+            _ => {}
+        }
+    }
+
+    fn about_to_wait(&mut self, _event_loop: &ActiveEventLoop) {
+        self.update();
+
+        if let Some(window) = &self.window {
+            window.request_redraw();
+        }
+    }
+}
+
+/// Entry point
+pub fn run() {
+    let event_loop = EventLoop::new().unwrap();
+    let mut engine = Engine::new();
+
+    event_loop.run_app(&mut engine).unwrap();
 }

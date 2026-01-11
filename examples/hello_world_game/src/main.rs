@@ -1,6 +1,5 @@
-use engine_core::Engine;
+use engine_core::run;
 
 fn main() {
-    let mut engine = Engine::new();
-    engine.run();
+    run();
 }
